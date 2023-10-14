@@ -26,7 +26,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
 
         String servletPath = request.getServletPath();
 
-        if (servletPath.equals("/tasks/")) {
+        if (servletPath.startsWith("/tasks/")) {
             // pegar a auth (username e password)
             String authorization = request.getHeader("Authorization");
 
@@ -49,6 +49,9 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                 BCrypt.Result passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
 
                 if (passwordVerify.verified) {
+                    // adiciona o ID do usuário na requisição
+                    request.setAttribute("idUser", user.getId());
+
                     // segue viagem
                     filterChain.doFilter(request, response);
 
